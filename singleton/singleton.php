@@ -32,7 +32,12 @@ class Database
                 PDO::ATTR_EMULATE_PREPARES   => false,
             ];
 
-            $this->connection = new PDO($dsn, $this->user, $this->pass, $options);
+            try {
+                $this->connection = new PDO($dsn, $this->user, $this->pass, $options);
+            } catch (PDOException $e) {
+                echo "Database connection failed: " . $e->getMessage();
+                exit;
+            }
         }
 
         return $this->connection;
