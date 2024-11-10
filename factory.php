@@ -29,35 +29,33 @@ class PushNotification implements Notification
     }
 }
 
-class NotificationFactory
+class NotificationService
 {
-    public static function create($type)
+    private $notification;
+
+    public function __construct(Notification $notification)
     {
-        switch ($type) {
-            case 'email':
-                return new EmailNotification();
-            case 'sms':
-                return new SMSNotification();
-            case 'push':
-                return new PushNotification();
-            default:
-                throw new Exception("Notification type '$type' is not recognized.");
-        }
+        $this->notification = $notification;
+    }
+
+    public function notify($message)
+    {
+        $this->notification->send($message);
     }
 }
 
 try {
-    $notificationType = 'email';
-    $notification = NotificationFactory::create($notificationType);
-    $notification->send("Hello via Email!");
+    $emailNotification = new EmailNotification();
+    $notificationService = new NotificationService($emailNotification);
+    $notificationService->notify("Hello via Email!");
 
-    $notificationType = 'sms';
-    $notification = NotificationFactory::create($notificationType);
-    $notification->send("Hello via SMS!");
+    $smsNotification = new SMSNotification();
+    $notificationService = new NotificationService($smsNotification);
+    $notificationService->notify("Hello via SMS!");
 
-    $notificationType = 'push';
-    $notification = NotificationFactory::create($notificationType);
-    $notification->send("Hello via Push Notification!");
+    $pushNotification = new PushNotification();
+    $notificationService = new NotificationService($pushNotification);
+    $notificationService->notify("Hello via Push Notification!");
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
